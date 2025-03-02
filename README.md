@@ -266,13 +266,6 @@ db.enrollments.find().pretty()
 ---
 
 ## Use Cases
-- Enterprise Applications that require structured SOAP communication.
-- Secure Enrollment Systems for universities and online platforms.
-- Banking & Finance where SOAP is preferred for transactional security.
-
----
-
-## Use Cases
 - **Enterprise Applications** that require structured SOAP communication.
 - **Secure Enrollment Systems** for universities and online platforms.
 - **Banking & Finance** where SOAP is preferred for transactional security.
