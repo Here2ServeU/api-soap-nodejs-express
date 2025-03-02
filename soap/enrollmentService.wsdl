@@ -1,0 +1,41 @@
+<definitions name="EnrollmentService" targetNamespace="http://t2s.com/enroll"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="http://t2s.com/enroll"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <message name="enrollUserRequest">
+        <part name="firstName" type="xsd:string"/>
+        <part name="lastName" type="xsd:string"/>
+        <part name="phone" type="xsd:string"/>
+        <part name="email" type="xsd:string"/>
+        <part name="course" type="xsd:string"/>
+    </message>
+
+    <message name="enrollUserResponse">
+        <part name="message" type="xsd:string"/>
+        <part name="enrollmentId" type="xsd:string"/>
+    </message>
+
+    <portType name="EnrollmentPortType">
+        <operation name="enrollUser">
+            <input message="tns:enrollUserRequest"/>
+            <output message="tns:enrollUserResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="EnrollmentBinding" type="tns:EnrollmentPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="enrollUser">
+            <soap:operation soapAction="http://t2s.com/enroll/enrollUser"/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+    </binding>
+
+    <service name="EnrollmentService">
+        <port name="EnrollmentPort" binding="tns:EnrollmentBinding">
+            <soap:address location="http://localhost:5050/wsdl"/>
+        </port>
+    </service>
+</definitions>

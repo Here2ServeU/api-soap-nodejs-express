@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enroll in Our Program (SOAP API)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        img {
+            width: 150px;
+            height: auto;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .caption {
+            font-size: 14px;
+            font-style: italic;
+            color: #555;
+        }
+        form {
+            text-align: left;
+        }
+        input, select {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #0073e6;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: #005bb5;
+        }
+        .message {
+            font-size: 18px;
+            margin-top: 10px;
+            display: none;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Enroll in Our Program</h1>
+    </header>
+
+    <div class="container">
+        <img src="Emmanuel-N.JPG" alt="Emmanuel Naweji">
+        <div class="caption">By Emmanuel Naweji</div>
+
+        <form id="enrollmentForm">
+            <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+            <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+            <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+            <input type="email" id="email" name="email" placeholder="Email Address" required>
+            <select id="course" name="course" required>
+                <option value="" disabled selected>Select a Course</option>
+                <option value="DevOps">DevOps</option>
+                <option value="Cloud">Cloud</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="successMessage" class="message success">Thank you for enrolling! Your data has been successfully submitted.</div>
+        <div id="errorMessage" class="message error"></div>
+    </div>
+
+    <script>
+        document.getElementById("enrollmentForm").addEventListener("submit", async (event) => {
+            event.preventDefault(); // Prevent page reload
+
+            const firstName = document.getElementById("firstName").value.trim();
+            const lastName = document.getElementById("lastName").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const course = document.getElementById("course").value;
+
+            const successMessage = document.getElementById("successMessage");
+            const errorMessage = document.getElementById("errorMessage");
+
+            // Hide previous messages
+            successMessage.style.display = "none";
+            errorMessage.style.display = "none";
+
+            if (!firstName || !lastName || !phone || !email || !course) {
+                errorMessage.innerText = "All fields are required.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            // Construct SOAP XML Request
+            const soapRequest = `
+                <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://t2s.com/enroll">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                        <tns:enrollUserRequest>
+                            <firstName>${firstName}</firstName>
+                            <lastName>${lastName}</lastName>
+                            <phone>${phone}</phone>
+                            <email>${email}</email>
+                            <course>${course}</course>
+                        </tns:enrollUserRequest>
+                    </soapenv:Body>
+                </soapenv:Envelope>`;
+
+            try {
+                // Send SOAP request to the server
+                const response = await fetch("http://127.0.0.1:5050/wsdl", {
+                    method: "POST",
+                    headers: { "Content-Type": "text/xml" },
+                    body: soapRequest
+                });
+
+                const responseText = await response.text();
+
+                // Display response in UI
+                if (response.ok) {
+                    successMessage.innerText = "Enrollment successful!";
+                    successMessage.style.display = "block";
+                    document.getElementById("enrollmentForm").reset();
+                } else {
+                    throw new Error("Error submitting the form.");
+                }
+
+            } catch (error) {
+                console.error("SOAP request failed:", error);
+                errorMessage.innerText = "Error: Unable to process enrollment.";
+                errorMessage.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>
