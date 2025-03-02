@@ -1,6 +1,8 @@
 # Building a SOAP API for T2S Enrollment
 
-SOAP (Simple Object Access Protocol) is widely used in enterprise environments where structured communication, security, and reliability are essential. This guide explains how to build a SOAP-based enrollment API for T2S, replacing the traditional REST API with an enterprise-ready SOAP implementation.
+**SOAP (Simple Object Access Protocol)** is widely used in enterprise environments where structured communication, security, and reliability are essential. 
+
+This guide explains how to build a **SOAP-based enrollment API for T2S**, replacing the traditional REST API with an enterprise-ready SOAP implementation.
 
 ---
 
@@ -52,9 +54,10 @@ npm install express soap xml2js body-parser dotenv mongoose cors
 - **cors** → Enables Cross-Origin Resource Sharing
 
 ---
-Step 2: Database Configuration
 
-- Create config/db.js to connect to MongoDB:
+## Step 2: Database Configuration
+
+- Create **config/db.js** to connect to MongoDB:
 ```javascript
 const mongoose = require("mongoose");
 
@@ -76,9 +79,9 @@ module.exports = connectDB;
 
 ---
 
-Step 3: Define the Enrollment Model
+## Step 3: Define the Enrollment Model
 
-- Create models/Enrollment.js:
+- Create **models/Enrollment.js**:
 ```javascript
 const mongoose = require("mongoose");
 
@@ -97,7 +100,7 @@ module.exports = mongoose.model("Enrollment", EnrollmentSchema);
 
 Step 4: Implement the SOAP Service
 
-- Create soap/soapService.js:
+- Create **soap/soapService.js**:
 ```javascript
 const Enrollment = require("../models/Enrollment");
 
@@ -137,9 +140,9 @@ module.exports = service;
 
 ## Step 5: Define the SOAP WSDL
 
-- Create soap/enrollmentService.wsdl:
+- Create **soap/enrollmentService.wsdl**:
 
-```wsdl
+```xml
 <definitions name="EnrollmentService" targetNamespace="http://t2s.com/enroll"
     xmlns="http://schemas.xmlsoap.org/wsdl/"
     xmlns:tns="http://t2s.com/enroll"
@@ -187,7 +190,7 @@ module.exports = service;
 
 ## Step 6: Configure Express Server
 
-- Modify app.js:
+- Modify **app.js*:
 ```javascript
 require("dotenv").config();
 const express = require("express");
@@ -211,10 +214,16 @@ app.listen(5050, () => {
 
 ## Step 7: Testing the SOAP API
 
-### 1. Using a SOAP Client (SoapUI)
-- Import the WSDL file into SoapUI.
-	•	Use the enrollUser operation with XML input:
+### 1. Start the SOAP API Server
+```bash
+node app.js
+```
+- The server should start on **http://127.0.0.1:5050/wsdl**
 
+### 2. Using a SOAP Client (SoapUI)
+- Import the WSDL file into SoapUI.
+- Use the enrollUser operation with XML input:
+```xml
 <enrollUserRequest>
     <firstName>John</firstName>
     <lastName>Doe</lastName>
@@ -222,29 +231,54 @@ app.listen(5050, () => {
     <email>johndoe@example.com</email>
     <course>Cloud Computing</course>
 </enrollUserRequest>
+```
 
-2. Using curl
+### 3. Using curl
 
-Run the following command:
-
+- Run the following command:
+```bash
 curl -X POST http://127.0.0.1:5050/wsdl -d @enrollmentRequest.xml
+```
 
-3. Using Postman (via raw XML)
-	•	Open Postman.
-	•	Select POST.
-	•	Paste the SOAP XML request in Body.
+### 4. Using Postman (via raw XML)
+- Open Postman.
+- Select POST.
+- Paste the SOAP XML request in Body.
 
-Future Improvements
-	•	Add WS-Security for authentication and message integrity.
-	•	Deploy to AWS Lambda with API Gateway for scalability.
-	•	Integrate with an LMS (Learning Management System).
-	•	Implement a logging system for better error tracking.
+### 5. Verify in MongoDB
+- Open MongoDB shell: 
+```bash
+mongosh
+use t2s-enrollment
+db.enrollments.find().pretty()
+```
 
-Use Cases
-	•	Enterprise Applications that require structured SOAP communication.
-	•	Secure Enrollment Systems for universities and online platforms.
-	•	Banking & Finance where SOAP is preferred for transactional security.
+- You should see the **newly enrolled user** in the database. 
 
-Conclusion
+---
 
-This SOAP API modernizes enrollment systems while ensuring enterprise-grade security and interoperability. By integrating SOAP-based messaging, we enable scalable, structured, and secure registration systems for future-ready e-learning platforms. 🚀
+## Future Improvements
+- **Add Authentication**: Use **WS-Security** to protect sensitive user data.
+- **Deploy to AWS**: Host the API using **AWS Lambda + API Gateway**.
+- **Payment Integration**: Add **Stripe or PayPal** for paid courses.
+- **Logging & Monitoring**: Use **ELK Stack** to monitor API activity.
+
+---
+
+## Use Cases
+- Enterprise Applications that require structured SOAP communication.
+- Secure Enrollment Systems for universities and online platforms.
+- Banking & Finance where SOAP is preferred for transactional security.
+
+---
+
+## Use Cases
+- **Enterprise Applications** that require structured SOAP communication.
+- **Secure Enrollment Systems** for universities and online platforms.
+- **Banking & Finance** where SOAP is preferred for transactional security.
+
+---
+
+## Conclusion
+
+This SOAP API **modernizes enrollment systems** while ensuring **enterprise-grade security and interoperability**. By integrating **SOAP-based messaging**, we enable **scalable, structured, and secure** registration systems for future-ready e-learning platforms. 
